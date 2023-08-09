@@ -52,20 +52,18 @@ contract QuickWork is ReentrancyGuard {
   /**
    * @dev Function to add a new task.
      * @param _taskId Unique identifier for the task.
-     * @param _amount Amount allocated for the task in wei.
      * @param _payerAddress Address of the payer for the task.
      * @param _payeeAddress Address of the payee for the task.
      * @param _approverAddress Address of the approver for the task.
      */
-  function addTask(uint256 _taskId, uint256 _amount, address payable _payerAddress, address payable _payeeAddress, address _approverAddress) public payable {
+  function addTask(uint256 _taskId, address payable _payerAddress, address payable _payeeAddress, address _approverAddress) public payable {
     require(_payerAddress != address(0) && _payeeAddress != address(0), "Payer and Payee addresses must not be zero");
     require(_payerAddress != _payeeAddress, "Payer and Payee addresses must be distinct");
     require(tasks[_taskId].id == 0, "Task ID already exists");
-    require(_amount > 0, "Amount should be greater than 0");
-    require(msg.value == _amount, "Sent ether value mismatch");
+    require(msg.value > 0, "Amount should be greater than 0");
 
-    tasks[_taskId] = Task(_taskId, _amount, _payerAddress, _payeeAddress, _approverAddress);
-    emit TaskAdded(_taskId, _payeeAddress, _amount, _approverAddress);
+    tasks[_taskId] = Task(_taskId, msg.value, _payerAddress, _payeeAddress, _approverAddress);
+    emit TaskAdded(_taskId, _payeeAddress, msg.value, _approverAddress);
   }
 
   /**

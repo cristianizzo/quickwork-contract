@@ -14,23 +14,19 @@ contract QuickWorkTest is Test {
 
   function setUp() public {
     manager = payable(address(0xABCD));
-    // For simplicity, we'll use the test contract as the manager
     payer = payable(address(0xABC));
-    // Dummy payer address
     payee = payable(address(0x123));
-    // Dummy payee address
     approver = payable(address(0xDEF));
-    // Dummy approver address
     quickWork = new QuickWork(address(this));
   }
 
   // Test adding a task
   function testAddTask() public {
     uint256 taskId = 1;
-    uint256 amount = 1 ether; // 1 ether for simplicity
+    uint256 amount = 1 ether;
 
     // Set the manager as the caller and send ether when adding the task
-    quickWork.addTask{value : amount}(taskId, amount, payer, payee, approver);
+    quickWork.addTask{value : amount}(taskId, payer, payee, approver);
 
     // Assertions
     (uint256 returnedTaskId, uint256 returnedAmount, address returnedPayer, address returnedPayee, address returnedApprover) = quickWork.tasks(taskId);
@@ -48,7 +44,7 @@ contract QuickWorkTest is Test {
     uint256 amount = 1 ether;
 
     // Set the manager as the caller and send ether when adding the task
-    quickWork.addTask{value : amount}(taskId, amount, payer, payee, approver);
+    quickWork.addTask{value : amount}(taskId, payer, payee, approver);
 
     // Impersonate the approver for the next call
     vm.prank(approver);
@@ -81,7 +77,7 @@ contract QuickWorkTest is Test {
     uint256 amount = 1 ether;
 
     // Set the manager as the caller and send ether when adding the task
-    quickWork.addTask{value : amount}(taskId, amount, payer, payee, approver);
+    quickWork.addTask{value : amount}(taskId, payer, payee, approver);
 
     // Impersonate the approver for the next call
     vm.prank(approver);
