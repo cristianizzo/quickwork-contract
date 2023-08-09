@@ -1,14 +1,14 @@
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
 import {Test, console2} from "forge-std/Test.sol";
-import {Counter} from "../src/Counter.sol";
+import {QuickWork} from "../src/QuickWork.sol";
 
-contract CounterTest is Test {
-    Counter public counter;
+contract QuickWorkTest is Test {
+    QuickWork public quickWork;
 
     function setUp() public {
-        counter = new Counter();
+        counter = new QuickWork();
         counter.setNumber(0);
     }
 
