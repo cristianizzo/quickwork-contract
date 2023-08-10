@@ -56,7 +56,7 @@ contract QuickWork is ReentrancyGuard {
      * @param _payeeAddress Address of the payee for the task.
      * @param _approverAddress Address of the approver for the task.
      */
-  function addTask(uint256 _taskId, address payable _payerAddress, address payable _payeeAddress, address _approverAddress) public payable {
+  function addTask(uint256 _taskId, address payable _payerAddress, address payable _payeeAddress, address _approverAddress) public payable onlyManager {
     require(_payerAddress != address(0) && _payeeAddress != address(0), "Payer and Payee addresses must not be zero");
     require(_payerAddress != _payeeAddress, "Payer and Payee addresses must be distinct");
     require(tasks[_taskId].id == 0, "Task ID already exists");

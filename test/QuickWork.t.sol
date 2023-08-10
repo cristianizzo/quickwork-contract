@@ -107,4 +107,65 @@ contract QuickWorkTest is Test {
     uint256 contractBalance = address(quickWork).balance;
     assertEq(contractBalance, 0, "Contract balance should be 0 after payer's withdrawal");
   }
+
+  // Test that only the manager can add a task
+  function testOnlyManagerCanAddTask() public {
+    uint256 taskId = 4; // Using a different taskId to avoid conflicts
+    uint256 amount = 1 ether;
+
+    // Send funds to the payer address
+    payable(payer).transfer(amount);
+
+    // Check payer's balance to ensure funds were transferred
+    uint256 payerBalance = address(payer).balance;
+    assertEq(payerBalance, amount, "Payer did not receive the funds");
+
+    // Impersonate a random address that is not the manager
+    vm.prank(payer);
+
+    // Try to add a task as a non-manager
+    try quickWork.addTask{value : amount}(taskId, payer, payee, approver) {
+      fail("Non-manager was able to add a task");
+    } catch Error(string memory reason) {
+      assertEq(reason, "Only the manager can call this function");
+    }
+  }
+
+  // Test that only the approver can approve a task
+  function testOnlyApproverCanApproveTask() public {
+    uint256 taskId = 5; // Using a different taskId to avoid conflicts
+    uint256 amount = 1 ether;
+
+    // Add a task as the manager
+    quickWork.addTask{value : amount}(taskId, payer, payee, approver);
+
+    // Impersonate a random address that is not the approver
+    vm.prank(payer);
+
+    // Try to approve a task as a non-approver
+    try quickWork.approveTask(taskId) {
+      fail("Non-approver was able to approve a task");
+    } catch Error(string memory reason) {
+      assertEq(reason, "Only the designated approver can call this function");
+    }
+  }
+
+  // Test that only the approver can reject a task
+  function testOnlyApproverCanRejectTask() public {
+    uint256 taskId = 6; // Using a different taskId to avoid conflicts
+    uint256 amount = 1 ether;
+
+    // Add a task as the manager
+    quickWork.addTask{value : amount}(taskId, payer, payee, approver);
+
+    // Impersonate a random address that is not the approver
+    vm.prank(payee);
+
+    // Try to reject a task as a non-approver
+    try quickWork.rejectTask(taskId) {
+      fail("Non-approver was able to reject a task");
+    } catch Error(string memory reason) {
+      assertEq(reason, "Only the designated approver can call this function");
+    }
+  }
 }
